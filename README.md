@@ -45,3 +45,11 @@ Para atender aos requisitos de performance e custo, algumas estratégias podem i
 go test -bench=. ./pkg/filesystem >> filesystem_result.txt
 
 ```
+
+
+
+### Atualizar mocks
+```shell
+mockgen -source=pkg/filesystem/adapter.go -destination=pkg/filesystem/driver_mock.go -package=filesystem
+
+```
