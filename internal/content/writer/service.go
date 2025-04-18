@@ -2,7 +2,7 @@ package writer
 
 import (
 	"context"
-	"errors"
+	"fmt"
 )
 
 type Service struct {
@@ -19,9 +19,8 @@ func (s *Service) Register(ctx context.Context, input VideoInputDto) error {
 		return err
 	}
 
-	err = s.repository.Save(ctx, entity)
-	if !errors.Is(err, ErrAlreadyRegistered) && err != nil {
-		return err
+	if err = s.repository.Save(ctx, entity); err != nil {
+		return fmt.Errorf("failed to save entity: %w", err)
 	}
 
 	return nil
