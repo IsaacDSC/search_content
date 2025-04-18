@@ -38,3 +38,10 @@ Para atender aos requisitos de performance e custo, algumas estratégias podem i
 - Tempo de resposta abaixo de X ms
 - Custo por milhão de requisições dentro do orçamento estabelecido
 - Estabilidade do serviço sob carga máxima
+
+
+## Controle de Metrias
+```shell
+go test -bench=. ./pkg/filesystem >> filesystem_result.txt
+
+```

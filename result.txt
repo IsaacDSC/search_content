@@ -1,0 +1,10 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/IsaacDSC/search_content/pkg/filesystem
+cpu: Apple M1
+BenchmarkFileWrite-8          	   10000	    114631 ns/op
+BenchmarkFileRead-8           	   94920	     17365 ns/op
+BenchmarkFileSeek-8           	  110457	     10981 ns/op
+BenchmarkDirectoryListing-8   	   92340	     13391 ns/op
+PASS
+ok  	github.com/IsaacDSC/search_content/pkg/filesystem	5.875s
