@@ -140,6 +140,15 @@ func (fs *FileSystem) Get(ctx context.Context, key FileName) (any, error) {
 	fs.mu.RLock()
 	defer fs.mu.RUnlock()
 
+	fileExists, err := fs.FileExists(ctx, key)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check file existence: %w", err)
+	}
+
+	if !fileExists {
+		return nil, ErrFileNotFound
+	}
+
 	fullPath := fs.getFullPath(key)
 
 	select {

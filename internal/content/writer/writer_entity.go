@@ -20,6 +20,10 @@ type Enterprise struct {
 
 type EnterpriseKey string
 
+func (ek EnterpriseKey) String() string {
+	return string(ek)
+}
+
 func NewEnterpriseKey(u *url.URL) EnterpriseKey {
 	return EnterpriseKey(u.Scheme + "://" + u.Host)
 }
