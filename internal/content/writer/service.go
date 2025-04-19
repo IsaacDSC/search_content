@@ -5,15 +5,19 @@ import (
 	"fmt"
 )
 
-type Service struct {
+type Service interface {
+	Register(ctx context.Context, input VideoInputDto) error
+}
+
+type ContentUseCase struct {
 	repository Repository
 }
 
-func NewService(repository Repository) *Service {
-	return &Service{repository: repository}
+func NewContentUseCase(repository Repository) *ContentUseCase {
+	return &ContentUseCase{repository: repository}
 }
 
-func (s *Service) Register(ctx context.Context, input VideoInputDto) error {
+func (s *ContentUseCase) Register(ctx context.Context, input VideoInputDto) error {
 	entity, err := input.ToDomain()
 	if err != nil {
 		return err

@@ -36,7 +36,6 @@ func NewEnterpriseKey(u *url.URL) EnterpriseKey {
 type PathKey string
 
 func NewPathKey(u *url.URL) PathKey {
-	//pathSanitized := strings.ReplaceAll(u.Path, "*", "")
 	return PathKey(strings.ReplaceAll(u.Path, "//", "/"))
 }
 

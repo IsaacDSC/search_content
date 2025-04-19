@@ -77,7 +77,7 @@ func TestService_Register(t *testing.T) {
 			}
 
 			// Create service with mock repository
-			service := NewService(mockRepo)
+			service := NewContentUseCase(mockRepo)
 
 			// Execute the method being tested
 			err := service.Register(context.Background(), tt.input)

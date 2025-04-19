@@ -6,15 +6,19 @@ import (
 	"github.com/IsaacDSC/search_content/internal/content/entity"
 )
 
-type Service struct {
+type Service interface {
+	GetContent(ctx context.Context, endpoint EndpointDto) (entity.Video, error)
+}
+
+type ContentUseCase struct {
 	repository Repository
 }
 
-func NewService(repository Repository) *Service {
-	return &Service{repository: repository}
+func NewContentUseCase(repository Repository) *ContentUseCase {
+	return &ContentUseCase{repository: repository}
 }
 
-func (s Service) GetContent(ctx context.Context, endpoint EndpointDto) (entity.Video, error) {
+func (s ContentUseCase) GetContent(ctx context.Context, endpoint EndpointDto) (entity.Video, error) {
 	url, err := endpoint.ToDomain()
 	if err != nil {
 		return entity.Video{}, err

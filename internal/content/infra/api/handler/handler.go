@@ -1,18 +1,28 @@
 package handler
 
-import "net/http"
+import (
+	"github.com/IsaacDSC/search_content/internal/content/reader"
+	"github.com/IsaacDSC/search_content/internal/content/writer"
+	"net/http"
+)
 
 type Handler struct {
+	wh writer.Handler
+	rh reader.Handler
 }
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(wh writer.Handler, rh reader.Handler) *Handler {
+	return &Handler{
+		wh: wh,
+		rh: rh,
+	}
 }
 
 func (h Handler) GetRoutes() map[string]func(w http.ResponseWriter, r *http.Request) error {
 	return map[string]func(w http.ResponseWriter, r *http.Request) error{
-		"GET /health":    h.health,
-		"POST /endpoint": h.saveNewRule,
+		"GET /health":   h.health,
+		"POST /content": h.wh.SaveContent,
+		"GET /content":  h.rh.GetContent,
 	}
 }
 
@@ -20,10 +30,4 @@ func (h Handler) health(w http.ResponseWriter, r *http.Request) error {
 	w.WriteHeader(http.StatusOK)
 
 	return nil
-}
-
-func (h Handler) saveNewRule(w http.ResponseWriter, r *http.Request) error {
-	_, err := w.Write([]byte("OK"))
-
-	return err
 }
