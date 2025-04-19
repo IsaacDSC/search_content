@@ -2,7 +2,7 @@ package reader
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"github.com/IsaacDSC/search_content/internal/content/entity"
 )
 
@@ -21,12 +21,15 @@ func (s Service) GetContent(ctx context.Context, endpoint EndpointDto) (entity.V
 	}
 
 	key := entity.NewEnterpriseKey(url)
-	fmt.Println(key)
+	data, err := s.repository.Get(ctx, key)
+	if err != nil {
+		return entity.Video{}, err
+	}
 
-	//data, err := s.repository.Get(ctx, key)
-	//if err != nil {
-	//	return entity.Video{}, err
-	//}
+	content, found := data.GetContent(entity.NewPathKey(url))
+	if !found {
+		return entity.Video{}, errors.New("content not found")
+	}
 
-	return entity.Video{}, nil
+	return content, nil
 }

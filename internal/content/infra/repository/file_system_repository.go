@@ -15,7 +15,7 @@ type FileSystemRepo struct {
 	fsDrive filesystem.Driver
 }
 
-var _ writer.Repository = (*FileSystemRepo)(nil)
+var _ Repository = (*FileSystemRepo)(nil)
 
 func NewFileSystemRepo(fsDrive filesystem.Driver) *FileSystemRepo {
 	return &FileSystemRepo{fsDrive: fsDrive}
