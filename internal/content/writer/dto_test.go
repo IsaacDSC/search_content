@@ -1,6 +1,7 @@
 package writer
 
 import (
+	"github.com/IsaacDSC/search_content/internal/content/entity"
 	"net/url"
 	"reflect"
 	"strings"
@@ -12,7 +13,7 @@ func TestVideoInputDto_ToDomain(t *testing.T) {
 		name        string
 		videoInput  VideoInputDto
 		wantErr     bool
-		wantDomain  Enterprise
+		wantDomain  entity.Enterprise
 		errContains string
 	}{
 		{
@@ -23,14 +24,14 @@ func TestVideoInputDto_ToDomain(t *testing.T) {
 				Endpoint:    "/api/videos",
 			},
 			wantErr: false,
-			wantDomain: func() Enterprise {
+			wantDomain: func() entity.Enterprise {
 				u, _ := url.Parse("https://example.com/path/to/video.mp4")
-				return Enterprise{
+				return entity.Enterprise{
 					Url:    u,
 					Origin: "https://example.com",
 					Paths:  []string{"path", "to", "video.mp4"},
 					Path:   "/path/to/video.mp4",
-					Video: Video{
+					Video: entity.Video{
 						VideoUrl:    "https://example.com/path/to/video.mp4",
 						TambnailUrl: "https://example.com/path/to/thumbnail.jpg",
 					},
@@ -45,14 +46,14 @@ func TestVideoInputDto_ToDomain(t *testing.T) {
 				Endpoint:    "/api/videos",
 			},
 			wantErr: false,
-			wantDomain: func() Enterprise {
+			wantDomain: func() entity.Enterprise {
 				u, _ := url.Parse("https://example.com/watch?v=abc123")
-				return Enterprise{
+				return entity.Enterprise{
 					Url:    u,
 					Origin: "https://example.com",
 					Paths:  []string{"watch"},
 					Path:   "/watch",
-					Video: Video{
+					Video: entity.Video{
 						VideoUrl:    "https://example.com/watch?v=abc123",
 						TambnailUrl: "https://example.com/thumbs/abc123.jpg",
 					},

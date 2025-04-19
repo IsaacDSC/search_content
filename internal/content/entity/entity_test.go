@@ -1,4 +1,4 @@
-package writer
+package entity
 
 import (
 	"net/url"

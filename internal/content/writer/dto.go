@@ -2,6 +2,7 @@ package writer
 
 import (
 	"errors"
+	"github.com/IsaacDSC/search_content/internal/content/entity"
 	"net/url"
 	"strings"
 )
@@ -12,10 +13,10 @@ type VideoInputDto struct {
 	Endpoint    string `json:"endpoint"`
 }
 
-func (v *VideoInputDto) ToDomain() (Enterprise, error) {
+func (v *VideoInputDto) ToDomain() (entity.Enterprise, error) {
 	endpoint, err := url.Parse(v.VideoUrl)
 	if err != nil {
-		return Enterprise{}, err
+		return entity.Enterprise{}, err
 	}
 
 	origin := endpoint.Scheme + "://" + endpoint.Host
@@ -23,19 +24,19 @@ func (v *VideoInputDto) ToDomain() (Enterprise, error) {
 	paths := strings.Split(path, "/")[1:] // Remove a primeira barra
 
 	if v.VideoUrl == "" {
-		return Enterprise{}, errors.New("video url is empty")
+		return entity.Enterprise{}, errors.New("video url is empty")
 	}
 
 	if v.TambnailUrl == "" {
-		return Enterprise{}, errors.New("thumbnail url is empty")
+		return entity.Enterprise{}, errors.New("thumbnail url is empty")
 	}
 
-	return Enterprise{
+	return entity.Enterprise{
 		Url:    endpoint,
 		Origin: origin,
 		Paths:  paths,
 		Path:   path,
-		Video: Video{
+		Video: entity.Video{
 			VideoUrl:    v.VideoUrl,
 			TambnailUrl: v.TambnailUrl,
 		},

@@ -11,6 +11,7 @@ package writer
 
 import (
 	context "context"
+	"github.com/IsaacDSC/search_content/internal/content/entity"
 	reflect "reflect"
 
 	gomock "go.uber.org/mock/gomock"
@@ -41,7 +42,7 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 }
 
 // Get mocks base method.
-func (m *MockRepository) Get(ctx context.Context, enterpriseKey EnterpriseKey) (EnterpriseData, error) {
+func (m *MockRepository) Get(ctx context.Context, enterpriseKey entity.EnterpriseKey) (EnterpriseData, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx, enterpriseKey)
 	ret0, _ := ret[0].(EnterpriseData)
@@ -56,7 +57,7 @@ func (mr *MockRepositoryMockRecorder) Get(ctx, enterpriseKey any) *gomock.Call {
 }
 
 // Save mocks base method.
-func (m *MockRepository) Save(ctx context.Context, enterprise Enterprise) error {
+func (m *MockRepository) Save(ctx context.Context, enterprise entity.Enterprise) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Save", ctx, enterprise)
 	ret0, _ := ret[0].(error)

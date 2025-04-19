@@ -1,4 +1,4 @@
-package writer
+package entity
 
 import (
 	"net/url"
@@ -8,6 +8,11 @@ import (
 type Video struct {
 	VideoUrl    string
 	TambnailUrl string
+}
+
+func (v Video) IsEmpty() bool {
+	var empty Video
+	return empty == v
 }
 
 type Enterprise struct {
@@ -31,6 +36,19 @@ func NewEnterpriseKey(u *url.URL) EnterpriseKey {
 type PathKey string
 
 func NewPathKey(u *url.URL) PathKey {
-	pathSanitized := strings.ReplaceAll(u.Path, "*", "")
-	return PathKey(strings.ReplaceAll(pathSanitized, "//", "/"))
+	//pathSanitized := strings.ReplaceAll(u.Path, "*", "")
+	return PathKey(strings.ReplaceAll(u.Path, "//", "/"))
+}
+
+func (pk PathKey) ToListPaths() (output []string) {
+	r := strings.Split(string(pk), "/")
+	for i := range r {
+		if r[i] == "" || r[i] == "/" {
+			continue
+		}
+
+		output = append(output, r[i])
+	}
+
+	return
 }

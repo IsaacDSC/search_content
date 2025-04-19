@@ -1,4 +1,4 @@
-package writer
+package reader
 
 import (
 	"context"
@@ -7,4 +7,5 @@ import (
 
 type Repository interface {
 	Save(ctx context.Context, enterprise entity.Enterprise) error
+	Get(ctx context.Context, enterpriseKey entity.EnterpriseKey) (EnterpriseData, error)
 }
