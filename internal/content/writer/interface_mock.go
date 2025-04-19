@@ -11,9 +11,9 @@ package writer
 
 import (
 	context "context"
-	"github.com/IsaacDSC/search_content/internal/content/entity"
 	reflect "reflect"
 
+	entity "github.com/IsaacDSC/search_content/internal/content/entity"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -39,21 +39,6 @@ func NewMockRepository(ctrl *gomock.Controller) *MockRepository {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 	return m.recorder
-}
-
-// Get mocks base method.
-func (m *MockRepository) Get(ctx context.Context, enterpriseKey entity.EnterpriseKey) (EnterpriseData, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", ctx, enterpriseKey)
-	ret0, _ := ret[0].(EnterpriseData)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Get indicates an expected call of Get.
-func (mr *MockRepositoryMockRecorder) Get(ctx, enterpriseKey any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockRepository)(nil).Get), ctx, enterpriseKey)
 }
 
 // Save mocks base method.

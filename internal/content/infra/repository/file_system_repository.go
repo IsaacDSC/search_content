@@ -4,7 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	writer "github.com/IsaacDSC/search_content/internal/content/writer"
+
+	"github.com/IsaacDSC/search_content/internal/content/entity"
+	"github.com/IsaacDSC/search_content/internal/content/reader"
+	"github.com/IsaacDSC/search_content/internal/content/writer"
 	"github.com/IsaacDSC/search_content/pkg/filesystem"
 )
 
@@ -18,9 +21,9 @@ func NewFileSystemRepo(fsDrive filesystem.Driver) *FileSystemRepo {
 	return &FileSystemRepo{fsDrive: fsDrive}
 }
 
-func (r FileSystemRepo) Save(ctx context.Context, enterprise writer.Enterprise) error {
-	enterpriseKey := writer.NewEnterpriseKey(enterprise.Url)
-	pathKey := writer.NewPathKey(enterprise.Url)
+func (r FileSystemRepo) Save(ctx context.Context, enterprise entity.Enterprise) error {
+	enterpriseKey := entity.NewEnterpriseKey(enterprise.Url)
+	pathKey := entity.NewPathKey(enterprise.Url)
 
 	result, err := r.Get(ctx, enterpriseKey)
 	if !errors.Is(filesystem.ErrFileNotFound, err) && err != nil {
@@ -28,7 +31,7 @@ func (r FileSystemRepo) Save(ctx context.Context, enterprise writer.Enterprise) 
 	}
 
 	if errors.Is(filesystem.ErrFileNotFound, err) {
-		data := writer.NewEnterprisesData(pathKey, enterprise)
+		data := reader.NewEnterprisesData(pathKey, enterprise)
 		fileName := filesystem.NewFileName(enterpriseKey.String())
 		return r.fsDrive.Save(ctx, fileName, data)
 	}
@@ -42,17 +45,17 @@ func (r FileSystemRepo) Save(ctx context.Context, enterprise writer.Enterprise) 
 	return nil
 }
 
-func (r FileSystemRepo) Get(ctx context.Context, enterpriseKey writer.EnterpriseKey) (writer.EnterpriseData, error) {
+func (r FileSystemRepo) Get(ctx context.Context, enterpriseKey entity.EnterpriseKey) (reader.EnterpriseData, error) {
 	fileName := filesystem.NewFileName(enterpriseKey.String())
 	data, err := r.fsDrive.Get(ctx, fileName)
 
 	if err != nil {
-		return writer.EnterpriseData{}, err
+		return reader.EnterpriseData{}, err
 	}
 
-	output, ok := data.(writer.EnterpriseData)
+	output, ok := data.(reader.EnterpriseData)
 	if !ok {
-		return writer.EnterpriseData{}, writer.ErrInvalidDataType
+		return reader.EnterpriseData{}, writer.ErrInvalidDataType
 	}
 
 	return output, nil

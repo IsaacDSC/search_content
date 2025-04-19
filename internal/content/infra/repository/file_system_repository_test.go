@@ -3,12 +3,15 @@ package repository
 import (
 	"context"
 	"errors"
+	"net/url"
+	"testing"
+
+	"github.com/IsaacDSC/search_content/internal/content/entity"
+	"github.com/IsaacDSC/search_content/internal/content/reader"
 	"github.com/IsaacDSC/search_content/internal/content/writer"
 	"github.com/IsaacDSC/search_content/pkg/filesystem"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
-	"net/url"
-	"testing"
 )
 
 func TestFileSystemRepo_Save(t *testing.T) {
@@ -24,25 +27,25 @@ func TestFileSystemRepo_Save(t *testing.T) {
 	// Define test cases
 	tests := []struct {
 		name          string
-		setupMock     func(*gomock.Controller) (filesystem.Driver, writer.Enterprise)
+		setupMock     func(*gomock.Controller) (filesystem.Driver, entity.Enterprise)
 		expectedError error
 	}{
 		{
 			name: "save new enterprise",
-			setupMock: func(ctrl *gomock.Controller) (filesystem.Driver, writer.Enterprise) {
+			setupMock: func(ctrl *gomock.Controller) (filesystem.Driver, entity.Enterprise) {
 				mockDriver := filesystem.NewMockDriver(ctrl)
-				enterprise := writer.Enterprise{
+				enterprise := entity.Enterprise{
 					Url: parseURL("https://example.com/video"),
 				}
-				enterpriseKey := writer.NewEnterpriseKey(enterprise.Url)
-				pathKey := writer.NewPathKey(enterprise.Url)
+				enterpriseKey := entity.NewEnterpriseKey(enterprise.Url)
+				pathKey := entity.NewPathKey(enterprise.Url)
 				fileName := filesystem.NewFileName(enterpriseKey.String())
 
 				mockDriver.EXPECT().
 					Get(gomock.Any(), fileName).
 					Return(nil, filesystem.ErrFileNotFound)
 
-				expectedData := writer.NewEnterprisesData(pathKey, enterprise)
+				expectedData := reader.NewEnterprisesData(pathKey, enterprise)
 				mockDriver.EXPECT().
 					Save(gomock.Any(), fileName, expectedData).
 					Return(nil)
@@ -53,16 +56,16 @@ func TestFileSystemRepo_Save(t *testing.T) {
 		},
 		{
 			name: "update existing enterprise",
-			setupMock: func(ctrl *gomock.Controller) (filesystem.Driver, writer.Enterprise) {
+			setupMock: func(ctrl *gomock.Controller) (filesystem.Driver, entity.Enterprise) {
 				mockDriver := filesystem.NewMockDriver(ctrl)
-				enterprise := writer.Enterprise{
+				enterprise := entity.Enterprise{
 					Url: parseURL("https://example.com/video"),
 				}
-				enterpriseKey := writer.NewEnterpriseKey(enterprise.Url)
-				pathKey := writer.NewPathKey(enterprise.Url)
+				enterpriseKey := entity.NewEnterpriseKey(enterprise.Url)
+				pathKey := entity.NewPathKey(enterprise.Url)
 				fileName := filesystem.NewFileName(enterpriseKey.String())
 
-				existingData := writer.NewEnterprisesData(pathKey, enterprise)
+				existingData := reader.NewEnterprisesData(pathKey, enterprise)
 
 				mockDriver.EXPECT().
 					Get(gomock.Any(), fileName).
@@ -72,7 +75,7 @@ func TestFileSystemRepo_Save(t *testing.T) {
 					Save(gomock.Any(), fileName, gomock.Any()).
 					DoAndReturn(func(_ context.Context, _ filesystem.FileName, data any) error {
 						// Verify the data being saved has the enterprise
-						savedData, ok := data.(writer.EnterpriseData)
+						savedData, ok := data.(reader.EnterpriseData)
 						assert.True(t, ok, "data should be EnterpriseData")
 
 						savedEnterprise, exists := savedData[pathKey]
@@ -88,12 +91,12 @@ func TestFileSystemRepo_Save(t *testing.T) {
 		},
 		{
 			name: "handle driver error",
-			setupMock: func(ctrl *gomock.Controller) (filesystem.Driver, writer.Enterprise) {
+			setupMock: func(ctrl *gomock.Controller) (filesystem.Driver, entity.Enterprise) {
 				mockDriver := filesystem.NewMockDriver(ctrl)
-				enterprise := writer.Enterprise{
+				enterprise := entity.Enterprise{
 					Url: parseURL("https://example.com/video"),
 				}
-				enterpriseKey := writer.NewEnterpriseKey(enterprise.Url)
+				enterpriseKey := entity.NewEnterpriseKey(enterprise.Url)
 				fileName := filesystem.NewFileName(enterpriseKey.String())
 				expectedErr := errors.New("driver error")
 
@@ -145,24 +148,24 @@ func TestFileSystemRepo_Get(t *testing.T) {
 	// Define test cases
 	tests := []struct {
 		name           string
-		setupMock      func(*gomock.Controller) (filesystem.Driver, writer.EnterpriseKey)
-		expectedData   writer.EnterpriseData
+		setupMock      func(*gomock.Controller) (filesystem.Driver, entity.EnterpriseKey)
+		expectedData   reader.EnterpriseData
 		expectedError  error
 		errorValidator func(t *testing.T, err error)
 	}{
 		{
 			name: "get existing enterprise data",
-			setupMock: func(ctrl *gomock.Controller) (filesystem.Driver, writer.EnterpriseKey) {
+			setupMock: func(ctrl *gomock.Controller) (filesystem.Driver, entity.EnterpriseKey) {
 				mockDriver := filesystem.NewMockDriver(ctrl)
 				url := parseURL("https://example.com/video")
-				enterpriseKey := writer.NewEnterpriseKey(url)
-				pathKey := writer.NewPathKey(url)
+				enterpriseKey := entity.NewEnterpriseKey(url)
+				pathKey := entity.NewPathKey(url)
 				fileName := filesystem.NewFileName(enterpriseKey.String())
 
-				enterprise := writer.Enterprise{
+				enterprise := entity.Enterprise{
 					Url: url,
 				}
-				expectedData := writer.NewEnterprisesData(pathKey, enterprise)
+				expectedData := reader.NewEnterprisesData(pathKey, enterprise)
 
 				mockDriver.EXPECT().
 					Get(gomock.Any(), fileName).
@@ -170,15 +173,15 @@ func TestFileSystemRepo_Get(t *testing.T) {
 
 				return mockDriver, enterpriseKey
 			},
-			expectedData:  writer.NewEnterprisesData(writer.NewPathKey(parseURL("https://example.com/video")), writer.Enterprise{Url: parseURL("https://example.com/video")}),
+			expectedData:  reader.NewEnterprisesData(entity.NewPathKey(parseURL("https://example.com/video")), entity.Enterprise{Url: parseURL("https://example.com/video")}),
 			expectedError: nil,
 		},
 		{
 			name: "handle file not found",
-			setupMock: func(ctrl *gomock.Controller) (filesystem.Driver, writer.EnterpriseKey) {
+			setupMock: func(ctrl *gomock.Controller) (filesystem.Driver, entity.EnterpriseKey) {
 				mockDriver := filesystem.NewMockDriver(ctrl)
 				url := parseURL("https://example.com/video")
-				enterpriseKey := writer.NewEnterpriseKey(url)
+				enterpriseKey := entity.NewEnterpriseKey(url)
 				fileName := filesystem.NewFileName(enterpriseKey.String())
 
 				mockDriver.EXPECT().
@@ -187,7 +190,7 @@ func TestFileSystemRepo_Get(t *testing.T) {
 
 				return mockDriver, enterpriseKey
 			},
-			expectedData:  writer.EnterpriseData{},
+			expectedData:  reader.EnterpriseData{},
 			expectedError: filesystem.ErrFileNotFound,
 			errorValidator: func(t *testing.T, err error) {
 				assert.ErrorIs(t, err, filesystem.ErrFileNotFound)
@@ -195,10 +198,10 @@ func TestFileSystemRepo_Get(t *testing.T) {
 		},
 		{
 			name: "handle invalid data type",
-			setupMock: func(ctrl *gomock.Controller) (filesystem.Driver, writer.EnterpriseKey) {
+			setupMock: func(ctrl *gomock.Controller) (filesystem.Driver, entity.EnterpriseKey) {
 				mockDriver := filesystem.NewMockDriver(ctrl)
 				url := parseURL("https://example.com/video")
-				enterpriseKey := writer.NewEnterpriseKey(url)
+				enterpriseKey := entity.NewEnterpriseKey(url)
 				fileName := filesystem.NewFileName(enterpriseKey.String())
 
 				// Return string instead of EnterpriseData to trigger type assertion failure
@@ -210,7 +213,7 @@ func TestFileSystemRepo_Get(t *testing.T) {
 
 				return mockDriver, enterpriseKey
 			},
-			expectedData:  writer.EnterpriseData{},
+			expectedData:  reader.EnterpriseData{},
 			expectedError: writer.ErrInvalidDataType,
 			errorValidator: func(t *testing.T, err error) {
 				assert.ErrorIs(t, err, writer.ErrInvalidDataType)

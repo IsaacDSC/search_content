@@ -61,7 +61,7 @@ func TestNewPathKey(t *testing.T) {
 		{
 			name:     "Path with wildcard",
 			urlInput: "https://example.com/api/v1/users/*",
-			want:     PathKey("/api/v1/users/"),
+			want:     PathKey("/api/v1/users/*"),
 		},
 		{
 			name:     "Root path",
@@ -71,7 +71,7 @@ func TestNewPathKey(t *testing.T) {
 		{
 			name:     "Path with multiple wildcards",
 			urlInput: "https://example.com/*/products/*",
-			want:     PathKey("/products/"),
+			want:     PathKey("/*/products/*"),
 		},
 		{
 			name:     "Path with query parameters",
@@ -81,7 +81,7 @@ func TestNewPathKey(t *testing.T) {
 		{
 			name:     "Complex path with multiple wildcards",
 			urlInput: "https://example.com/api/*/users/*/profile",
-			want:     PathKey("/api/users/profile"),
+			want:     PathKey("/api/*/users/*/profile"),
 		},
 	}
 
