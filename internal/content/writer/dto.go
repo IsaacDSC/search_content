@@ -31,6 +31,14 @@ func (v *VideoInputDto) ToDomain() (entity.Enterprise, error) {
 		return entity.Enterprise{}, errors.New("thumbnail url is empty")
 	}
 
+	if _, err := url.Parse(v.VideoUrl); err != nil {
+		return entity.Enterprise{}, errors.New("invalid video url")
+	}
+
+	if _, err := url.Parse(v.TambnailUrl); err != nil {
+		return entity.Enterprise{}, errors.New("invalid thumbnail url")
+	}
+
 	return entity.Enterprise{
 		Url:    endpoint,
 		Origin: origin,

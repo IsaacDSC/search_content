@@ -65,7 +65,7 @@ func TestFileSystemRepo_Save(t *testing.T) {
 				pathKey := entity.NewPathKey(enterprise.Url)
 				fileName := filesystem.NewFileName(enterpriseKey.String())
 
-				existingData := reader.NewEnterprisesData(pathKey, enterprise)
+				existingData := map[string]any{string(pathKey): enterprise}
 
 				mockDriver.EXPECT().
 					Get(gomock.Any(), fileName).
@@ -157,15 +157,15 @@ func TestFileSystemRepo_Get(t *testing.T) {
 			name: "get existing enterprise data",
 			setupMock: func(ctrl *gomock.Controller) (filesystem.Driver, entity.EnterpriseKey) {
 				mockDriver := filesystem.NewMockDriver(ctrl)
-				url := parseURL("https://example.com/video")
-				enterpriseKey := entity.NewEnterpriseKey(url)
-				pathKey := entity.NewPathKey(url)
+				endpoint := parseURL("https://example.com/video")
+				enterpriseKey := entity.NewEnterpriseKey(endpoint)
+				pathKey := entity.NewPathKey(endpoint)
 				fileName := filesystem.NewFileName(enterpriseKey.String())
 
 				enterprise := entity.Enterprise{
-					Url: url,
+					Url: endpoint,
 				}
-				expectedData := reader.NewEnterprisesData(pathKey, enterprise)
+				expectedData := map[string]any{string(pathKey): enterprise}
 
 				mockDriver.EXPECT().
 					Get(gomock.Any(), fileName).

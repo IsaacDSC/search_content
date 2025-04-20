@@ -21,16 +21,16 @@ func TestVideoInputDto_ToDomain(t *testing.T) {
 			videoInput: VideoInputDto{
 				VideoUrl:    "https://example.com/path/to/video.mp4",
 				TambnailUrl: "https://example.com/path/to/thumbnail.jpg",
-				Endpoint:    "/api/videos",
+				Endpoint:    "https://example.com/path/*",
 			},
 			wantErr: false,
 			wantDomain: func() entity.Enterprise {
-				u, _ := url.Parse("https://example.com/path/to/video.mp4")
+				u, _ := url.Parse("https://example.com/path/*")
 				return entity.Enterprise{
 					Url:    u,
 					Origin: "https://example.com",
-					Paths:  []string{"path", "to", "video.mp4"},
-					Path:   "/path/to/video.mp4",
+					Paths:  []string{"path", "*"},
+					Path:   "/path/*",
 					Video: entity.Video{
 						VideoUrl:    "https://example.com/path/to/video.mp4",
 						TambnailUrl: "https://example.com/path/to/thumbnail.jpg",
@@ -41,9 +41,9 @@ func TestVideoInputDto_ToDomain(t *testing.T) {
 		{
 			name: "Video URL with query parameters",
 			videoInput: VideoInputDto{
-				VideoUrl:    "https://example.com/watch?v=abc123",
+				VideoUrl:    "https://example.com/api/videos?v=abc123",
 				TambnailUrl: "https://example.com/thumbs/abc123.jpg",
-				Endpoint:    "/api/videos",
+				Endpoint:    "https://example.com/watch?v=abc123",
 			},
 			wantErr: false,
 			wantDomain: func() entity.Enterprise {
@@ -54,7 +54,7 @@ func TestVideoInputDto_ToDomain(t *testing.T) {
 					Paths:  []string{"watch"},
 					Path:   "/watch",
 					Video: entity.Video{
-						VideoUrl:    "https://example.com/watch?v=abc123",
+						VideoUrl:    "https://example.com/api/videos?v=abc123",
 						TambnailUrl: "https://example.com/thumbs/abc123.jpg",
 					},
 				}
@@ -68,7 +68,7 @@ func TestVideoInputDto_ToDomain(t *testing.T) {
 				Endpoint:    "/api/videos",
 			},
 			wantErr:     true,
-			errContains: "parse",
+			errContains: "invalid",
 		},
 		{
 			name: "Empty video URL",
