@@ -20,9 +20,9 @@ func NewHandler(wh writer.Handler, rh reader.Handler) *Handler {
 
 func (h Handler) GetRoutes() map[string]func(w http.ResponseWriter, r *http.Request) error {
 	return map[string]func(w http.ResponseWriter, r *http.Request) error{
-		"GET /health":   h.health,
-		"POST /content": h.wh.SaveContent,
-		"GET /content":  h.rh.GetContent,
+		"GET /health":             h.health,
+		"POST /content":           h.wh.SaveContent,
+		"GET /content/{endpoint}": h.rh.GetContent,
 	}
 }
 

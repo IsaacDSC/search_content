@@ -30,7 +30,7 @@ func (ek EnterpriseKey) String() string {
 }
 
 func NewEnterpriseKey(u *url.URL) EnterpriseKey {
-	return EnterpriseKey(u.Scheme + "://" + u.Host)
+	return EnterpriseKey(u.Host)
 }
 
 type PathKey string

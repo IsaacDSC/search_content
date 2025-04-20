@@ -2,6 +2,7 @@ package reader
 
 import (
 	"github.com/IsaacDSC/search_content/internal/content/entity"
+	"strings"
 )
 
 type ListEnterprises map[entity.EnterpriseKey]EnterpriseData
@@ -26,17 +27,22 @@ func (ed EnterpriseData) GetContent(input entity.PathKey) (entity.Video, bool) {
 	inputPaths := input.ToListPaths()
 
 	for _, v := range ed {
-		paths := entity.NewPathKey(v.Url).ToListPaths()
+		url := v.Url
+		paths := entity.NewPathKey(url).ToListPaths()
 		totalMatch := 0
 
+		if len(inputPaths) < len(paths) {
+			continue
+		}
+
 		var length int
-		equalResult := len(inputPaths) - len(paths)
-		if equalResult < 0 {
-			length = equalResult * -1
-		} else if equalResult == 0 {
-			length = len(inputPaths)
+		if len(inputPaths) > len(paths) {
+			if !strings.Contains(url.Path, "*") {
+				continue
+			}
+			length = len(paths)
 		} else {
-			length = equalResult
+			length = len(inputPaths)
 		}
 
 		for i := 0; i < length; i++ {

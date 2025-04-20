@@ -1,6 +1,10 @@
 package reader
 
-import "net/http"
+import (
+	"encoding/base64"
+	"encoding/json"
+	"net/http"
+)
 
 type Handler interface {
 	GetContent(w http.ResponseWriter, r *http.Request) error
@@ -15,7 +19,33 @@ func NewHandler(service Service) *HttpHandler {
 }
 
 func (h *HttpHandler) GetContent(w http.ResponseWriter, r *http.Request) error {
-	_, err := w.Write([]byte("OK"))
+	w.Header().Set("Content-Type", "application/json")
+	defer r.Body.Close()
 
-	return err
+	endpoint := r.PathValue("endpoint")
+
+	decodedBytes, err := base64.StdEncoding.DecodeString(endpoint)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid base64 encoding"))
+		return err
+	}
+
+	decodedEndpoint := NewEndpointDto(string(decodedBytes))
+
+	content, err := h.service.GetContent(r.Context(), decodedEndpoint)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to get content"))
+		return err
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(content); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to encode content"))
+		return err
+	}
+
+	return nil
 }

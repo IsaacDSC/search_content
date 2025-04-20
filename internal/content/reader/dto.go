@@ -6,6 +6,10 @@ import (
 
 type EndpointDto string
 
+func NewEndpointDto(endpoint string) EndpointDto {
+	return EndpointDto(endpoint)
+}
+
 func (e EndpointDto) ToDomain() (*url.URL, error) {
 	endpoint, err := url.Parse(string(e))
 	if err != nil {

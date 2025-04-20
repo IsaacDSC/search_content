@@ -2,9 +2,9 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
-
 	"github.com/IsaacDSC/search_content/internal/content/entity"
 	"github.com/IsaacDSC/search_content/internal/content/reader"
 	"github.com/IsaacDSC/search_content/internal/content/writer"
@@ -53,10 +53,22 @@ func (r FileSystemRepo) Get(ctx context.Context, enterpriseKey entity.Enterprise
 		return reader.EnterpriseData{}, err
 	}
 
-	output, ok := data.(reader.EnterpriseData)
+	output, ok := data.(map[string]any)
 	if !ok {
 		return reader.EnterpriseData{}, writer.ErrInvalidDataType
 	}
 
-	return output, nil
+	// Convert map to JSON bytes
+	jsonBytes, err := json.Marshal(output)
+	if err != nil {
+		return reader.EnterpriseData{}, fmt.Errorf("failed to marshal data: %w", err)
+	}
+
+	// Unmarshal JSON into EnterpriseData
+	var enterpriseData reader.EnterpriseData
+	if err := json.Unmarshal(jsonBytes, &enterpriseData); err != nil {
+		return reader.EnterpriseData{}, fmt.Errorf("failed to unmarshal data: %w", err)
+	}
+
+	return enterpriseData, nil
 }

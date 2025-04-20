@@ -50,7 +50,7 @@ type FileName string
 // NewFileName creates a new FileName with the specified input
 // and applies standard filepath formatting.
 func NewFileName(input string) FileName {
-	return FileName(fmt.Sprintf("assets/tmp/%s_json", input))
+	return FileName(fmt.Sprintf("assets/tmp/%s.json", input))
 }
 
 // String returns the string representation of the FileName.

@@ -1,0 +1,20 @@
+### Health Check
+GET http://localhost:8080/health
+
+### Save Content
+POST http://localhost:8080/content
+Content-Type: application/json
+
+{
+  "video_url": "https://video2.com.br",
+  "thumbnail_url": "https://thumbnail2.com.br",
+  "endpoint": "https://example.com/home/camisa/*"
+}
+
+
+
+### Get Content
+GET http://localhost:8080/content/aHR0cHM6Ly9leGFtcGxlLmNvbS9ob21lL2NhbWlzYS9tYXNjdWxpbm8=
+
+### Get Content with Query Parameters
+GET http://localhost:8080/content?id=123

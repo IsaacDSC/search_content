@@ -93,6 +93,22 @@ func TestEnterpriseData_GetContent(t *testing.T) {
 			expectedVideo: videoC,
 			expectedFound: true,
 		},
+		{
+			name: "Multiple wildcard patterns",
+			enterpriseData: reader.EnterpriseData{
+				entity.PathKey("/home"): enterpriseBuilder.WithRandomData().
+					WithPath("/home").
+					WithVideo(videoA).
+					Build(),
+				entity.PathKey("/home/camisa/*"): enterpriseBuilder.WithRandomData().
+					WithPath("/home/camisa/*").
+					WithVideo(videoC).
+					Build(),
+			},
+			input:         entity.PathKey("home/camisa/masculino"),
+			expectedVideo: videoC,
+			expectedFound: true,
+		},
 	}
 
 	for _, tt := range tests {

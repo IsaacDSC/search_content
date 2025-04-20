@@ -14,7 +14,7 @@ type VideoInputDto struct {
 }
 
 func (v *VideoInputDto) ToDomain() (entity.Enterprise, error) {
-	endpoint, err := url.Parse(v.VideoUrl)
+	endpoint, err := url.Parse(v.Endpoint)
 	if err != nil {
 		return entity.Enterprise{}, err
 	}

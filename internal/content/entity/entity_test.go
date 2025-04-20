@@ -15,22 +15,22 @@ func TestNewEnterpriseKey(t *testing.T) {
 		{
 			name:     "Simple URL",
 			urlInput: "https://example.com/path",
-			want:     EnterpriseKey("https://example.com"),
+			want:     EnterpriseKey("example.com"),
 		},
 		{
 			name:     "URL with port",
 			urlInput: "http://localhost:8080/api/v1",
-			want:     EnterpriseKey("http://localhost:8080"),
+			want:     EnterpriseKey("localhost:8080"),
 		},
 		{
 			name:     "URL with username and password",
 			urlInput: "https://user:pass@example.com/secure",
-			want:     EnterpriseKey("https://example.com"),
+			want:     EnterpriseKey("example.com"),
 		},
 		{
 			name:     "URL with query parameters",
 			urlInput: "https://api.example.com/search?q=test",
-			want:     EnterpriseKey("https://api.example.com"),
+			want:     EnterpriseKey("api.example.com"),
 		},
 	}
 
