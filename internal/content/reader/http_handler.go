@@ -20,6 +20,11 @@ func NewHandler(service Service) *HttpHandler {
 
 func (h *HttpHandler) GetContent(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	w.Header().Set("Cache-Control", "no-cache")
+
 	defer r.Body.Close()
 
 	endpoint := r.PathValue("endpoint")
